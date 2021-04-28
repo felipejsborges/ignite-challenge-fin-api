@@ -8,7 +8,8 @@ export default {
   preset: 'ts-jest',
   testEnvironment: "node",
   collectCoverageFrom: [
-		'<rootDir>/src/modules/**/useCases/**/*UseCase.ts'
+		'<rootDir>/src/modules/**/useCases/**/*(?:UseCase|Controller).ts',
+		'<rootDir>/src/modules/**/repositories/**/[^I]*Repository.ts'
 	],
   coverageReporters: [
     "html",
