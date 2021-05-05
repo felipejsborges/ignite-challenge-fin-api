@@ -21,10 +21,10 @@
 
 ### About the challenge
 
-An application that is already developed without any tests and I have to:
-- [Create unit tests](https://github.com/felipejsborges/ignite-challenge-fin-api/commit/45a98d9a263ceecae253f6c10a044c9a7bcae562)
-- [Create integrations tests](https://github.com/felipejsborges/ignite-challenge-fin-api/commit/d7c60c282182b1f0c59a475a9bea7b93c2bde3a8)
-- [Implement a new feature: allow to transfer money between users](https://github.com/felipejsborges/ignite-challenge-fin-api/commit/42c8656db7763df42d37c0edbadb7235e122f7a3)
+An application that is already developed based on fintechs features, but without any tests. So I implemented:
+- [Unit tests](https://github.com/felipejsborges/ignite-challenge-fin-api/commit/45a98d9a263ceecae253f6c10a044c9a7bcae562)
+- [Integration tests](https://github.com/felipejsborges/ignite-challenge-fin-api/commit/d7c60c282182b1f0c59a475a9bea7b93c2bde3a8)
+- [New feature: transfers between users](https://github.com/felipejsborges/ignite-challenge-fin-api/commit/42c8656db7763df42d37c0edbadb7235e122f7a3)
 <hr>
 
 ### Run local
