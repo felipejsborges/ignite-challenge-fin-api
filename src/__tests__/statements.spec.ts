@@ -77,13 +77,15 @@ describe('[Statements]', () => {
     await statementsUtil.create({
       user_id,
       amount: depositAmount,
-      type: 'deposit' as OperationType
+      type: 'deposit' as OperationType,
+      target_id: undefined
     })
 
     await statementsUtil.create({
       user_id,
       amount: faker.datatype.number({ min: 0, max: depositAmount }),
-      type: 'withdraw' as OperationType
+      type: 'withdraw' as OperationType,
+      target_id: undefined
     })
 
     const response = await request(app)
@@ -135,7 +137,8 @@ describe('[Statements]', () => {
       amount: balance,
       type: 'deposit' as OperationType,
       description: faker.lorem.paragraph(),
-      user_id
+      user_id,
+      target_id: undefined
     })
 
     const response = await request(app)
