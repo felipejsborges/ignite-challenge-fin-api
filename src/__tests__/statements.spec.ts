@@ -10,15 +10,21 @@ import { CreateStatementUseCase } from '../modules/statements/useCases/createSta
 import { StatementsRepository } from '../modules/statements/repositories/StatementsRepository'
 import { OperationType } from '../modules/statements/entities/Statement'
 import { IStatementsRepository } from '../modules/statements/repositories/IStatementsRepository'
+import { StatementsUtil } from './utils/statements.util'
+import { GetBalanceUseCase } from '../modules/statements/useCases/getBalance/GetBalanceUseCase'
 
 const ENDPOINT = '/api/v1'
 
 describe('[Statements]', () => {
   let token: string
   let user_id: string
+  let target_id: string
 
   let usersRepository: IUsersRepository
   let statementsRepository: IStatementsRepository
+  let statementsUtil: StatementsUtil
+  let createUserUseCase: CreateUserUseCase
+  let getBalanceUseCase: GetBalanceUseCase
   let createStatementUseCase: CreateStatementUseCase
 
   beforeAll(async () => {
@@ -28,10 +34,12 @@ describe('[Statements]', () => {
   beforeEach(async () => {
     usersRepository = new UsersRepository()
     statementsRepository = new StatementsRepository()
+    statementsUtil = new StatementsUtil(statementsRepository)
 
-    const createUserUseCase = new CreateUserUseCase(usersRepository)
+    createUserUseCase = new CreateUserUseCase(usersRepository)
     const authenticateUserUseCase = new AuthenticateUserUseCase(usersRepository)
-    createStatementUseCase = new CreateStatementUseCase(usersRepository, statementsRepository)
+    getBalanceUseCase = new GetBalanceUseCase(statementsRepository, usersRepository)
+    createStatementUseCase = new CreateStatementUseCase(usersRepository, statementsRepository, getBalanceUseCase)
 
     const name = faker.name.findName()
     const email = faker.internet.email()
@@ -41,6 +49,12 @@ describe('[Statements]', () => {
       name,
       email,
       password,
+    })).id as string
+
+    target_id = (await createUserUseCase.execute({
+      name: faker.name.findName(),
+      email: faker.internet.email(),
+      password: faker.internet.password(),
     })).id as string
 
     token = (await authenticateUserUseCase.execute({
@@ -58,12 +72,26 @@ describe('[Statements]', () => {
   });
 
   it('should be able get user balance', async () => {
+    const depositAmount = faker.datatype.number({ min: 1, max: 999 })
+
+    await statementsUtil.create({
+      user_id,
+      amount: depositAmount,
+      type: 'deposit' as OperationType
+    })
+
+    await statementsUtil.create({
+      user_id,
+      amount: faker.datatype.number({ min: 0, max: depositAmount }),
+      type: 'withdraw' as OperationType
+    })
+
     const response = await request(app)
       .get(`${ENDPOINT}/statements/balance`)
       .set('Authorization', `Bearer ${token}`)
 
     expect(response.status).toBe(200)
-    expect(response.body).toHaveProperty('statement')
+    expect(response.body).toHaveProperty('statements')
     expect(response.body).toHaveProperty('balance')
   })
 
@@ -91,6 +119,27 @@ describe('[Statements]', () => {
 
     const response = await request(app)
       .post(`${ENDPOINT}/statements/withdraw`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        amount: faker.datatype.number({ min: 0, max: balance }),
+        description: faker.lorem.paragraph()
+      })
+
+    expect(response.status).toBe(201)
+  })
+
+  it('should be able transfer', async () => {
+    const balance = faker.datatype.number({ min: 1, max: 999 })
+
+    await createStatementUseCase.execute({
+      amount: balance,
+      type: 'deposit' as OperationType,
+      description: faker.lorem.paragraph(),
+      user_id
+    })
+
+    const response = await request(app)
+      .post(`${ENDPOINT}/statements/transfer/${target_id}`)
       .set('Authorization', `Bearer ${token}`)
       .send({
         amount: faker.datatype.number({ min: 0, max: balance }),

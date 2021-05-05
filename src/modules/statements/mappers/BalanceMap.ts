@@ -1,8 +1,8 @@
 import { Statement } from "../entities/Statement";
 
 export class BalanceMap {
-  static toDTO({statement, balance}: { statement: Statement[], balance: number}) {
-    const parsedStatement = statement.map(({
+  static toDTO({statements, balance}: { statements: Statement[], balance: number}) {
+    const parsedStatement = statements.map(({
       id,
       amount,
       description,
@@ -21,7 +21,7 @@ export class BalanceMap {
     ));
 
     return {
-      statement: parsedStatement,
+      statements: parsedStatement,
       balance: Number(balance)
     }
   }

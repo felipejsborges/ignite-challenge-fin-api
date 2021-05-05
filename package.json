@@ -4,10 +4,11 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "ts-node-dev --transpile-only --ignore-watch node_modules --respawn ./src/server.ts",
+    "dev": "ts-node-dev --transpile-only --ignore-watch node_modules --respawn ./src/server.ts --inspect",
+    "debug": "ts-node-dev --transpile-only --inspect=0.0.0.0:7001 --exit-child --respawn ./src/server.ts",
     "typeorm": "ts-node-dev ./node_modules/typeorm/cli",
     "test": "NODE_ENV=test jest --no-cache",
-    "test:coverage": "NODE_ENV=test jest --coverage"
+    "test:coverage": "NODE_ENV=test jest --coverage --no-cache"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

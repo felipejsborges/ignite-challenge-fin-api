@@ -6,6 +6,8 @@ import { UsersRepository } from '../../modules/users/repositories/UsersRepositor
 import { IStatementsRepository } from '../../modules/statements/repositories/IStatementsRepository';
 import { StatementsRepository } from '../../modules/statements/repositories/StatementsRepository';
 
+import { GetBalanceUseCase } from '../../modules/statements/useCases/getBalance/GetBalanceUseCase';
+
 container.registerSingleton<IUsersRepository>(
   'UsersRepository',
   UsersRepository
@@ -14,4 +16,9 @@ container.registerSingleton<IUsersRepository>(
 container.registerSingleton<IStatementsRepository>(
   'StatementsRepository',
   StatementsRepository
+);
+
+container.registerSingleton<GetBalanceUseCase>(
+  'GetBalanceUseCase',
+  GetBalanceUseCase
 );

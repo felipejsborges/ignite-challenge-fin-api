@@ -10,7 +10,7 @@ interface IRequest {
 }
 
 interface IResponse {
-  statement: Statement[];
+  statements: Statement[];
   balance: number;
 }
 
@@ -31,11 +31,26 @@ export class GetBalanceUseCase {
       throw new GetBalanceError();
     }
 
-    const balance = await this.statementsRepository.getUserBalance({
-      user_id,
-      with_statement: true
-    });
+    const statements = await this.statementsRepository.findStatementsByUserId(user_id);
 
-    return balance as IResponse;
+    const balance = statements.reduce((acc, operation) => {
+      if (operation.type === 'transfer') {
+        if (operation.target_id === user_id) {
+          return acc + operation.amount;
+        } else {
+          return acc - operation.amount;
+        }
+      }
+      else if (operation.type === 'deposit') {
+        return acc + operation.amount;
+      } else { // operation.type === 'withdraw'
+        return acc - operation.amount;
+      }
+    }, 0)
+
+    return {
+      balance,
+      statements
+    };
   }
 }

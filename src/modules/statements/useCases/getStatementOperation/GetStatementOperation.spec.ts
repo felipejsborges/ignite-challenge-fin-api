@@ -30,7 +30,7 @@ describe('[Statement]GetStatementOperation', () => {
       user_id: user.id as string,
       amount: faker.datatype.number({ min: 1 }),
       description: faker.lorem.sentence(),
-      type: faker.random.arrayElement(['withdraw', 'deposit']) as OperationType,
+      type: faker.random.arrayElement(['withdraw', 'deposit', 'transfer']) as OperationType,
     })
 
     statement_id = statement.id as string
